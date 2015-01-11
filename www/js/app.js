@@ -49,6 +49,18 @@ angular.module('todo', ['ionic','firebase'])
                 window.user = $scope.user;
             });
             
+            $scope.getLastIncTask = function(project) {
+                // sanity check
+                if (project.length < 1) return null;
+                
+                // return the last incomplete task
+                for (var i = project.length - 1; i >= 0; i--) {
+                    if (!project[i].done) return project[i];
+                } 
+                // all projects are completed
+                return null;
+            }
+          
             // A utility function for creating a new project
             // with the given projectTitle
             var createProject = function(projectTitle) {
@@ -82,15 +94,15 @@ angular.module('todo', ['ionic','firebase'])
                 if(!$scope.user.lastproject) {
                     return;
                 }
-    
+                task.done = false;
                 var name = $scope.user.lastproject;
-                $scope.projectsList[name].push(task.title);
+                $scope.projectsList[name].push(task);
                 $scope.projectsList.$save(name);
                 $scope.taskModal.hide();
     
                 task.title = "";
             };
-    
+            
             $scope.newTask = function() {
                 $scope.taskModal.show();
             };
@@ -102,4 +114,11 @@ angular.module('todo', ['ionic','firebase'])
             $scope.toggleProjects = function() {
                 $scope.sideMenuController.toggleLeft();
             };    
+            
+            $scope.taskDone = function(task) {
+                console.log(task);
+                console.log(projectsList[$scope.user.lastproject]);
+                task.done = true;
+                $scope.projectsList.$save($scope.user.lastproject);
+            };
     });
