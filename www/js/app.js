@@ -32,23 +32,63 @@ angular.module('todo', ['ionic','firebase'])
         }
       }
     })
-    
+      // GOD CONTROLLER
       .controller('TodoCtrl', function($scope, $firebase, $timeout, Modal, Projects) {
     
             $scope.projectsList = {};
             $scope.user = {};
             // Load or initialize projects
-            $scope.projectsList = $firebase(new Firebase("https://burning-fire-602.firebaseio.com/projects")).$asObject();
-            $scope.user = $firebase(new Firebase("https://burning-fire-602.firebaseio.com/Users/John")).$asObject();
-            $scope.projectsList.$loaded().then(function() {
-                console.log($scope.projectsList);
-                window.projectsList = $scope.projectsList;
+            var refUrl = "https://burning-fire-602.firebaseio.com"
+            var myRef = new Firebase(refUrl);
+            $scope.projectsList = null;
+            $scope.user = null;
+            $scope.notifications = null;
+            // really, authentication should occur in a service. Will research that later
+            $scope.authClient = new FirebaseSimpleLogin(myRef, function(error, user) {
+                if (error) {
+                    // an error occurred while attempting login
+                    console.log(error);
+                  } else if (user) {
+                    $scope.user = user;  
+                    $scope.$apply();
+                    var userRef = new Firebase(refUrl + "/Users/" + user.uid);
+                    userRef.once('value', function(userSnapshot) {
+                        if (userSnapshot.val() === null) {
+                            userRef.child('email').set(user.email);
+                        }
+                    });
+                    $scope.projectsList = $firebase(new Firebase(refUrl + "/Users/" + user.uid + "/Projects")).$asObject();
+                    $scope.notifications = $firebase(new Firebase(refUrl + "/Users/" + user.uid + "/Notifications")).$asObject();
+                    // load projects list stuff
+                    $scope.projectsList.$loaded().then(function() {
+                        console.log($scope.projectsList);
+                        window.projectsList = $scope.projectsList;
+                    });
+                    $scope.projectsList.$loaded().then(function () {
+                        console.log($scope.user);
+                        window.user = $scope.user;
+                    });
+                  } else {
+                    // user is logged out
+                  }
             });
-            $scope.projectsList.$loaded().then(function () {
-                console.log($scope.user);
-                window.user = $scope.user;
-            });
-            
+//             var authRef = new Firebase(refUrl + "/.info/authenticated");
+//             authRef.on("value", function(snap) {
+//                 if (snap.val() === true) {
+//                     alert("authenticated");
+//                 } else {
+//                     alert("not authenticated");
+//                 }
+//             });
+            $scope.login = function() {
+                $scope.authClient.login('google');  
+            };
+          
+            $scope.logout = function() {
+                $scope.authClient.logout();    
+                $scope.user = null;
+            };      
+          
             $scope.getLastIncTask = function(project) {
                 // sanity check
                 if (project.length < 1) return null;
@@ -65,6 +105,7 @@ angular.module('todo', ['ionic','firebase'])
             // with the given projectTitle
             var createProject = function(projectTitle) {
                 $scope.projectsList[projectTitle] = [];
+                $scope.projectsList[projectTitle].name = projectTitle;
                 $scope.projectsList.$save(projectTitle);
                 $scope.selectProject(projectTitle);
             }
@@ -83,13 +124,17 @@ angular.module('todo', ['ionic','firebase'])
                 $scope.sideMenuController.close();
             };
     
-            // Create our modal
+            // Create our modals
             Modal.fromTemplateUrl('new-task.html', function(modal) {
                 $scope.taskModal = modal;
             }, {
                 scope: $scope
             });
-    
+            Modal.fromTemplateUrl('notifications.html', function(modal) {
+                $scope.notificationModal = modal;
+            }, {
+                scope: $scope
+            });
             $scope.createTask = function(task) {
                 if(!$scope.user.lastproject) {
                     return;
@@ -120,5 +165,42 @@ angular.module('todo', ['ionic','firebase'])
                 console.log(projectsList[$scope.user.lastproject]);
                 task.done = true;
                 $scope.projectsList.$save($scope.user.lastproject);
+            };
+              
+            $scope.openNotifications = function() {
+                $scope.notificationModal.show();
+            };
+          
+            $scope.closeNotifications = function() {
+                $scope.notificationModal.hide();
+            };
+          
+            $scope.getProject = function(projectName, userId) {
+                myRef.child('Users').child(userId).child('Projects').child(projectName).once('value', function(snap) {
+                    var proj = snap.val();  
+                    createProject(projectName);
+                    angular.forEach(proj, function(value, key) {
+                       $scope.createTask(value); 
+                    });
+                });
+            };
+          
+            $scope.sendNotification = function(proj, projName, email) {
+                // have to iterate through users to find which one has this e-mail. not very scalable, but scale would be a great problem to have
+                console.log(proj);
+                console.log(email);
+                console.log(projName);
+                myRef.child('Users').once('value', function(snap) {
+                    angular.forEach(snap.val(), function(value, key) {
+                        console.log(key);
+                        if (value.email == email) {
+                            myRef.child('Users').child(key).child('Notifications').child(projName).set({
+                                text: projName,
+                                id: projName,
+                                uid: user.uid
+                            });
+                        } 
+                    });
+                });  
             };
     });

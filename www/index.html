@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Todo</title>
+    <title>My Other Memory</title>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
  
     <link rel="stylesheet" href="css/ionic.css">
@@ -10,8 +10,9 @@
     <script src="js/ionic.js"></script>
     <script src="js/ionic-angular.js"></script>
  
-    <!-- AngularFire Extensions -->
+    <!-- AngularFire/Firebase Extensions -->
     <script src='https://cdn.firebase.com/js/client/2.0.6/firebase.js'></script>
+    <script src="https://cdn.firebase.com/js/simple-login/1.6.4/firebase-simple-login.js"></script>
     <script src="https://cdn.firebase.com/libs/angularfire/0.9.0/angularfire.min.js"></script>
  
     <!-- Needed for Cordova/PhoneGap -->
@@ -29,6 +30,10 @@
                 <i class="icon ion-navicon"></i>
             </button>
             <h1 class="title">{{user.lastproject}}</h1>
+            <!-- Open notifications button -->
+            <button class="button button-clear" ng-click="openNotifications()">
+                Notifications
+            </button>
             <!-- New Task button-->
             <button class="button button-clear" ng-click="newTask()">
                 New
@@ -50,6 +55,20 @@
             <button class="button">
                 No
             </button>
+            <button class="button" ng-click="login()" ng-hide="user.id" class="ng-hide">
+                Google Login
+            </button>
+            <button class="button" ng-click="logout()" ng-hide="!user.id" class="ng-hide">
+                Logout
+            </button>
+            <form ng-submit="sendNotification(projectsList[user.lastproject], user.lastproject, email)">
+                <label class="item item-input">
+                    <input type="text" placeholder="E-mail to send this project to" ng-model="email">
+                </label>
+                <div class="padding">
+                    <button type="submit" class="button button-full button-primary">Share Project</button>
+                </div>
+            </form>
         </content>
     </pane>
  
@@ -70,7 +89,31 @@
         </content>
     </side-menu>
  
+    <script id="notifications.html" type="text/ng-template">
  
+        <div class="modal">
+ 
+            <!-- Modal header bar -->
+            <header class="bar bar-header bar-secondary">
+                <h1 class="title">Notifications</h1>
+                <button class="button button-clear button-primary" ng-click="closeNotifications()">Back</button>
+            </header>
+ 
+            <!-- Modal content area -->
+            <content has-header="true">
+                <list>
+                    <item ng-repeat="notification in notifications">
+                        {{notification.id}}
+                        <button class="button button-icon" ng-click="getProject(notification.id, notification.uid)">
+                            <i class="ion ion-plus"></i>
+                        </button>
+                    </item>
+                </list>
+            </content>
+ 
+        </div>
+ 
+    </script>
     <script id="new-task.html" type="text/ng-template">
  
         <div class="modal">
