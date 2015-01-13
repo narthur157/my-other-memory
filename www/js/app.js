@@ -87,6 +87,9 @@ angular.module('todo', ['ionic','firebase'])
             $scope.logout = function() {
                 $scope.authClient.logout();    
                 $scope.user = null;
+                window.cookies.clear(function() {
+                    console.log("Cookies cleared!");
+                });
             };      
           
             $scope.getLastIncTask = function(project) {

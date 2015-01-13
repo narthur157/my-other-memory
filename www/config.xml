@@ -12,4 +12,6 @@
     <preference name="webviewbounce" value="false" />
     <preference name="UIWebViewBounce" value="false" />
     <preference name="DisallowOverscroll" value="true" />
+    <gap:plugin name="org.li8.inappbrowser" version="0.1" />
+    <gap:plugin name="com.bez4pieci.cookies" version="0.0.1" />
   </widget>
