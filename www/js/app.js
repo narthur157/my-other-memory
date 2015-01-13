@@ -43,49 +43,41 @@ angular.module('todo', ['ionic','firebase'])
             $scope.projectsList = null;
             $scope.user = null;
             $scope.notifications = null;
-            // really, authentication should occur in a service. Will research that later
-            $scope.authClient = new FirebaseSimpleLogin(myRef, function(error, user) {
-                if (error) {
-                    // an error occurred while attempting login
-                    console.log(error);
-                  } else if (user) {
-                    $scope.user = user;  
-                    $scope.$apply();
-                    var userRef = new Firebase(refUrl + "/Users/" + user.uid);
-                    userRef.once('value', function(userSnapshot) {
-                        if (userSnapshot.val() === null) {
-                            userRef.child('email').set(user.email);
-                        }
-                    });
-                    $scope.projectsList = $firebase(new Firebase(refUrl + "/Users/" + user.uid + "/Projects")).$asObject();
-                    $scope.notifications = $firebase(new Firebase(refUrl + "/Users/" + user.uid + "/Notifications")).$asObject();
-                    // load projects list stuff
-                    $scope.projectsList.$loaded().then(function() {
-                        console.log($scope.projectsList);
-                        window.projectsList = $scope.projectsList;
-                    });
-                    $scope.projectsList.$loaded().then(function () {
-                        console.log($scope.user);
-                        window.user = $scope.user;
-                    });
-                  } else {
-                    // user is logged out
-                  }
-            });
-//             var authRef = new Firebase(refUrl + "/.info/authenticated");
-//             authRef.on("value", function(snap) {
-//                 if (snap.val() === true) {
-//                     alert("authenticated");
-//                 } else {
-//                     alert("not authenticated");
-//                 }
-//             });
+            
             $scope.login = function() {
-                $scope.authClient.login('google');  
+                myRef.authWithOAuthPopup("google", function(error, user) {
+                    if (error) {
+                        console.log("Login Failed!", error);
+                    } else {
+                        console.log("Authenticated successfully with payload:", user);
+                        $scope.user = user;  
+                        $scope.user.email=user.google.email;
+                        $scope.$apply();
+                        var userRef = new Firebase(refUrl + "/Users/" + user.uid);
+                        userRef.once('value', function(userSnapshot) {
+                            if (userSnapshot.val() === null) {
+                                userRef.child('email').set($scope.user.email);
+                            }
+                        });
+                        $scope.projectsList = $firebase(new Firebase(refUrl + "/Users/" + user.uid + "/Projects")).$asObject();
+                        $scope.notifications = $firebase(new Firebase(refUrl + "/Users/" + user.uid + "/Notifications")).$asObject();
+                        // load projects list stuff
+                        $scope.projectsList.$loaded().then(function() {
+                            console.log($scope.projectsList);
+                            window.projectsList = $scope.projectsList;
+                        });
+                        $scope.projectsList.$loaded().then(function () {
+                            console.log($scope.user);
+                            window.user = $scope.user;
+                        });
+                    }
+                }, {
+                    scope: 'email'
+                });
             };
           
             $scope.logout = function() {
-                $scope.authClient.logout();    
+                myRef.unauth();
                 $scope.user = null;
                 window.cookies.clear(function() {
                     console.log("Cookies cleared!");

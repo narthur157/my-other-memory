@@ -55,10 +55,10 @@
             <button class="button">
                 No
             </button>
-            <button class="button" ng-click="login()" ng-hide="user.id" class="ng-hide">
+            <button class="button" ng-click="login()" ng-hide="user.uid" class="ng-hide">
                 Google Login
             </button>
-            <button class="button" ng-click="logout()" ng-hide="!user.id" class="ng-hide">
+            <button class="button" ng-click="logout()" ng-hide="!user.uid" class="ng-hide">
                 Logout
             </button>
             <form ng-submit="sendNotification(projectsList[user.lastproject], user.lastproject, email)">
