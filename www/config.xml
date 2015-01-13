@@ -1,6 +1,4 @@
 <?xml version='1.0' encoding='utf-8'?>
-<gap:plugin name="org.li8.inappbrowser" version="0.1" />
-<gap:plugin name="com.bez4pieci.cookies" version="0.0.1" />
 <widget id="com.ionic.hello" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Todo</name>
     <description>
@@ -14,4 +12,6 @@
     <preference name="webviewbounce" value="false" />
     <preference name="UIWebViewBounce" value="false" />
     <preference name="DisallowOverscroll" value="true" />
+    <gap:plugin name="org.li8.inappbrowser" version="0.1" />
+    <gap:plugin name="com.bez4pieci.cookies" version="0.0.1" />
   </widget>
