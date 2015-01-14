@@ -1,0 +1,47 @@
+        <ion-side-menus>
+
+            <!-- Center content -->
+            <ion-pane side-menu-content>
+                <header class="bar bar-header bar-dark">
+                    <button class="button button-icon" ng-click="toggleProjects()">
+                        <i class="icon ion-navicon"></i>
+                    </button>
+                    <h1 class="title">{{user.lastproject}}</h1>
+                    <!-- Open notifications button -->
+                    <button class="button button-clear" ng-click="openNotifications()">
+                        Notifications
+                    </button>
+                    <!-- New Task button-->
+                    <button class="button button-clear" ng-click="newTask()">
+                        New
+                    </button>
+                </header>
+                <ion-content has-header="true" scroll="false">
+                    <list>
+                        <item ng-repeat="task in projectsList[user.lastproject]" ng-hide="!task.done" class="ng-hide">
+                            <s>{{task.title}}</s>
+                        </item>
+                        <item ng-repeat="task in projectsList[user.lastproject]" ng-hide="task.done" class="ng-hide">
+                            {{task.title}}
+                        </item>
+                    </list>
+                </ion-content>
+            </ion-pane>
+
+            <!-- Left menu -->
+            <ion-side-menu side="left">
+                <ion-header class="bar bar-header bar-dark">
+                    <h1 class="title">Projects</h1>
+                    <button class="button button-icon" ng-click="newProject()">
+                        <i class="ion ion-plus"></i>
+                    </button>
+                </ion-header>
+                <ion-content has-header="true" scroll="false">
+                    <ion-list>
+                        <ion-item ng-repeat="(name, project) in projectsList" ng-click="selectProject(name)" ng-class="{active: user.lastproject == project}">
+                            {{name}}
+                        </ion-item>
+                    </ion-list>
+                </ion-content>
+            </ion-side-menu>
+        </ion-side-menus>
