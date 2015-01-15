@@ -10,6 +10,7 @@ app.run(function($rootScope, $state, $ionicPlatform) {
                 $state.go("login");
             }
         });
+        
         $state.go("login");
     });
 });
@@ -21,12 +22,11 @@ app.config(["$stateProvider", function ($stateProvider) {
         templateUrl: "views/login.html",
     })
     .state("todo", {
-        // the rest is the same for ui-router and ngRoute...
+        url: "/todo",
         controller: "TodoController",
         templateUrl: "views/todo.html",
         resolve: {
             // controller will not be loaded until $requireAuth resolves
-            // Auth refers to our $firebaseAuth wrapper in the example above
             "currentAuth": ["Auth", function(Auth) {
                 // $requireAuth returns a promise so the resolve waits for it to complete
                 // If the promise is rejected, it will throw a $stateChangeError (see above)
