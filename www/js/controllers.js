@@ -1,5 +1,5 @@
 var app = angular.module('todo.controllers', []);
-app.controller('TodoController', function($scope, $firebase, $firebaseAuth, $timeout, $ionicModal, $ionicSideMenuDelegate, Projects, FIREBASE_REF) {
+app.controller('TodoController', function($scope, $firebase, $firebaseAuth, $timeout, $ionicModal, $ionicSideMenuDelegate, Projects, FIREBASE_REF, FIRE_URL, Auth) {
     console.log('todoContrller loaded?');
     $scope.projectsList = Projects.all();
     $scope.lastproject = null;
@@ -100,17 +100,19 @@ app.controller('TodoController', function($scope, $firebase, $firebaseAuth, $tim
 
     $scope.sendNotification = function(proj, projName, email) {
         // have to iterate through users to find which one has this e-mail. not very scalable, but scale would be a great problem to have
+        if (email === null) email = prompt('E-mail to share this project with?');
         console.log(proj);
         console.log(email);
         console.log(projName);
-        myRef.child('Users').once('value', function(snap) {
+        var ref = new Firebase(FIRE_URL);
+        ref.child('Users').once('value', function(snap) {
             angular.forEach(snap.val(), function(value, key) {
                 console.log(key);
                 if (value.email == email) {
-                    myRef.child('Users').child(key).child('Notifications').child(projName).set({
+                    ref.child('Users').child(key).child('Notifications').child(projName).set({
                         text: projName,
                         id: projName,
-                        uid: user.uid
+                        uid: Auth.$getAuth().uid
                     });
                 } 
             });

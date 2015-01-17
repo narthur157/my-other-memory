@@ -12,6 +12,10 @@
                 <button class="button button-clear" ng-click="openNotifications()">
                     Notifications
                 </button>
+                <!-- Share project button -->
+                <button class="button button-clear" ng-click="sendNotification(projectsList[lastproject], lastproject, null)">
+                    Share Project
+                </button>
                 <!-- New Task button-->
                 <button class="button button-clear" ng-click="newTask()">
                     New
