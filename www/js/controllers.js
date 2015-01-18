@@ -1,6 +1,7 @@
 var app = angular.module('todo.controllers', []);
-app.controller('TodoController', function($scope, $firebase, $firebaseAuth, $timeout, $ionicModal, $ionicSideMenuDelegate, Projects, FIREBASE_REF, FIRE_URL, Auth) {
+app.controller('TodoController', function($scope, $firebase, $firebaseAuth, $timeout, $ionicModal, $ionicSideMenuDelegate, Projects, FIREBASE_REF, FIRE_URL, Auth, Notifications) {
     console.log('todoContrller loaded?');
+    $scope.notifications = Notifications.all();
     $scope.projectsList = Projects.all();
     $scope.lastproject = null;
     $scope.getLastIncTask = function(project) {
@@ -37,7 +38,9 @@ app.controller('TodoController', function($scope, $firebase, $firebaseAuth, $tim
         $scope.lastproject = project;
         $scope.toggleProjects();
     };
-
+    $scope.logout = function() {
+        Auth.$unauth();
+    }
     // Create our modals
     $ionicModal.fromTemplateUrl('new-task.html', function(modal) {
         $scope.taskModal = modal;
@@ -89,7 +92,8 @@ app.controller('TodoController', function($scope, $firebase, $firebaseAuth, $tim
     };
 
     $scope.getProject = function(projectName, userId) {
-        myRef.child('Users').child(userId).child('Projects').child(projectName).once('value', function(snap) {
+        var ref = new Firebase(FIRE_URL);
+        ref.child('Users').child(userId).child('Projects').child(projectName).once('value', function(snap) {
             var proj = snap.val();  
             createProject(projectName);
             angular.forEach(proj, function(value, key) {
@@ -144,6 +148,7 @@ app.controller('LoginController', function($scope, $firebase, $timeout, $state, 
             console.log("Logged in as:", authData.uid);
         } else {
             console.log("Logged out");
+            $state.go("login");
         }
     });
     //     $scope.projectsList = {};

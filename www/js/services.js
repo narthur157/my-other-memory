@@ -1,6 +1,14 @@
 var app = angular.module('todo.services', []);
 app.value('FIREBASE_REF', 'burning-fire-602');
 app.value('FIRE_URL', 'https://burning-fire-602.firebaseio.com');
+app.factory("Notifications", function($firebase, Auth, FIRE_URL) {
+   return {
+       all: function() {
+           var uid = Auth.$getAuth().uid;
+           return $firebase(new Firebase(FIRE_URL + "/Users/" + uid + "/Notifications")).$asObject();
+       }
+   }; 
+});
 /**
      * The Projects factory handles saving and loading projects
      * from local storage/Firebase?, and also lets us save and load the
@@ -18,7 +26,7 @@ app.factory('Projects', function($firebase, Auth, FIRE_URL) {
             return $firebase(new Firebase(FIRE_URL + "/Users/" + uid + "/Projects")).$asObject();
         },
         save: function(projects) {
-            window.localStorage.setItem('projects', angular.toJson(projects));
+            //window.localStorage.setItem('projects', angular.toJson(projects));
             console.log(window.localStorage);
         },
         newProject: function(projectTitle) {

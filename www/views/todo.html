@@ -7,7 +7,7 @@
                 <button class="button button-icon" ng-click="toggleProjects()">
                     <i class="icon ion-navicon"></i>
                 </button>
-                <h1 class="title">{{lastproject}}</h1>
+                
                 <!-- Open notifications button -->
                 <button class="button button-clear" ng-click="openNotifications()">
                     Notifications
@@ -15,6 +15,11 @@
                 <!-- Share project button -->
                 <button class="button button-clear" ng-click="sendNotification(projectsList[lastproject], lastproject, null)">
                     Share Project
+                </button>
+                <h1 class="title">{{lastproject}}</h1>
+                <!-- Logout button -->
+                <button class="button button-clear padding-horizontal" ng-click="logout()">
+                    Sign Out
                 </button>
                 <!-- New Task button-->
                 <button class="button button-clear" ng-click="newTask()">

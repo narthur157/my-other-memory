@@ -1,12 +1,12 @@
 <ion-view title="Login">
-    <ion-content>
-        <div ng-show="user">
-            <p>Hello, {{ user.google.displayName }}</p>
-            <button ng-click="logout()">Logout</button>
-        </div>
-        <div ng-hide="user">
-            <p>Welcome, please log in.</p>
-            <button ng-click="login()">Login</button>
+    <div class="bar bar-footer bar-dark">
+        <h1 class="title">My Other Memory</h1>
+    </div>
+    <ion-content class="center">
+        <div class="row">
+            <div class="col">
+                <button class="button button-block button-assertive" ng-click="login()">Sign in with Google</button>
+            </div>
         </div>
     </ion-content>
 </ion-view>
