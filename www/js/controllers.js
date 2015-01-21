@@ -41,17 +41,7 @@ app.controller('TodoController', function($scope, $firebase, $firebaseAuth, $tim
     $scope.logout = function() {
         Auth.$unauth();
     }
-    // Create our modals
-    $ionicModal.fromTemplateUrl('new-task.html', function(modal) {
-        $scope.taskModal = modal;
-    }, {
-        scope: $scope
-    });
-    $ionicModal.fromTemplateUrl('notifications.html', function(modal) {
-        $scope.notificationModal = modal;
-    }, {
-        scope: $scope
-    });
+
     $scope.createTask = function(task) {
         if(!$scope.lastproject) {
             return;
@@ -61,18 +51,23 @@ app.controller('TodoController', function($scope, $firebase, $firebaseAuth, $tim
         var name = $scope.lastproject;
         $scope.projectsList[name].push(task);
         $scope.projectsList.$save();
-        $scope.taskModal.hide();
-        console.log($scope.taskModalInput);
-        $scope.taskModalInput = {};
+        $scope.closeNewTask();
     };
 
     $scope.newTask = function() {
-        $scope.taskModal.show();
+        // Create our modals
+        $ionicModal.fromTemplateUrl('new-task.html', function(modal) {
+            $scope.taskModal = modal;
+            $scope.taskModal.show();
+        }, {
+            scope: $scope
+        });
     };
 
     $scope.closeNewTask = function() {
         $scope.taskModalInput = {};
         $scope.taskModal.hide();
+        $scope.taskModal.remove();
     };
     $scope.deleteProject = function(name, project) {
         console.log(name);
@@ -92,11 +87,17 @@ app.controller('TodoController', function($scope, $firebase, $firebaseAuth, $tim
     };
 
     $scope.openNotifications = function() {
-        $scope.notificationModal.show();
+        $ionicModal.fromTemplateUrl('notifications.html', function(modal) {
+            $scope.notificationModal = modal;
+                    $scope.notificationModal.show();
+        }, {
+            scope: $scope
+        });
     };
 
     $scope.closeNotifications = function() {
         $scope.notificationModal.hide();
+        $scope.notificationModal.remove();
     };
 
     $scope.getProject = function(projectName, userId) {

@@ -13,10 +13,7 @@
                     <i class="ion ion-earth"></i>
                 </button>
                 <h1 class="title">{{lastproject}}</h1>
-                <!-- Logout button -->
-                <button class="button button-clear padding-horizontal" ng-click="logout()">
-                    Sign Out
-                </button>
+                
                 <!-- New Task button-->
                 <button class="button button-clear" ng-click="newTask()">
                     New
@@ -33,6 +30,12 @@
                 </ion-list>
 
             </ion-content>
+            <ion-footer-bar class="bar bar-footer bar-dark">
+                <!-- Logout button -->
+                <button class="button button-clear padding-horizontal" ng-click="logout()">
+                    Sign Out
+                </button>
+            </ion-footer-bar>
         </ion-side-menu-content>
 
         <!-- Left menu -->
@@ -54,9 +57,9 @@
                     
                 </ion-list>
             </ion-content>
-            <ion-footer-bar class="bar bar-footer bar-dark ng-hide" align-title="center" ng-hide="!lastproject">
+            <ion-footer-bar class="bar bar-footer bar-dark" align-title="center" >
                 <h1 class="title">
-                    <button class="button title" ng-click="sendNotification(projectsList[lastproject], lastproject, null)" >
+                    <button class="button title ng-hide" ng-click="sendNotification(projectsList[lastproject], lastproject, null)" ng-hide="!lastproject">
                         Share Current Project
                     </button>
                 </h1>
