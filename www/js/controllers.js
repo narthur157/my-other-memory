@@ -1,9 +1,9 @@
 var app = angular.module('todo.controllers', []);
 app.controller('TodoController', function($scope, $firebase, $firebaseAuth, $timeout, $ionicModal, $ionicSideMenuDelegate, Projects, FIREBASE_REF, FIRE_URL, Auth, Notifications) {
-    console.log('todoContrller loaded?');
     $scope.notifications = Notifications.all();
     $scope.projectsList = Projects.all();
     $scope.lastproject = null;
+    $scope.taskModalInput = {};
     $scope.getLastIncTask = function(project) {
         // sanity check
         if (project.length < 1) return null;
@@ -20,7 +20,7 @@ app.controller('TodoController', function($scope, $firebase, $firebaseAuth, $tim
     // with the given projectTitle
     var createProject = function(projectTitle) {
         $scope.projectsList[projectTitle] = [];
-        $scope.projectsList[projectTitle].name = projectTitle;
+        //$scope.projectsList[projectTitle].name = projectTitle;
         $scope.projectsList.$save(projectTitle);
         $scope.selectProject(projectTitle);
     }
@@ -56,13 +56,14 @@ app.controller('TodoController', function($scope, $firebase, $firebaseAuth, $tim
         if(!$scope.lastproject) {
             return;
         }
+        
         task.done = false;
         var name = $scope.lastproject;
         $scope.projectsList[name].push(task);
-        $scope.projectsList.$save(name);
+        $scope.projectsList.$save();
         $scope.taskModal.hide();
-
-        task.title = "";
+        console.log($scope.taskModalInput);
+        $scope.taskModalInput = {};
     };
 
     $scope.newTask = function() {
@@ -70,9 +71,16 @@ app.controller('TodoController', function($scope, $firebase, $firebaseAuth, $tim
     };
 
     $scope.closeNewTask = function() {
+        $scope.taskModalInput = {};
         $scope.taskModal.hide();
-    }
-    
+    };
+    $scope.deleteProject = function(name, project) {
+        console.log(name);
+        console.log(project);
+        console.log($scope.projectsList[name]);
+        delete $scope.projectsList[name];
+        $scope.projectsList.$save();
+    };
     $scope.toggleProjects = function() {
         $ionicSideMenuDelegate.toggleLeft();
     };    
@@ -92,11 +100,20 @@ app.controller('TodoController', function($scope, $firebase, $firebaseAuth, $tim
     };
 
     $scope.getProject = function(projectName, userId) {
+        delete $scope.notifications[projectName];
+        $scope.notifications.$save();
         var ref = new Firebase(FIRE_URL);
+        console.log(projectName);
+        console.log(userId);
         ref.child('Users').child(userId).child('Projects').child(projectName).once('value', function(snap) {
             var proj = snap.val();  
+           
             createProject(projectName);
-            angular.forEach(proj, function(value, key) {
+            snap.forEach(function(childSnapshot) {
+                // key will be "fred" the first time and "wilma" the second time
+                var key = childSnapshot.key();
+                // childData will be the actual contents of the child
+                var value = childSnapshot.val();
                 $scope.createTask(value); 
             });
         });
@@ -110,8 +127,9 @@ app.controller('TodoController', function($scope, $firebase, $firebaseAuth, $tim
         console.log(projName);
         var ref = new Firebase(FIRE_URL);
         ref.child('Users').once('value', function(snap) {
-            angular.forEach(snap.val(), function(value, key) {
-                console.log(key);
+            snap.forEach(function(childSnapshot) {
+                var key = childSnapshot.key();
+                var value = childSnapshot.val();
                 if (value.email == email) {
                     ref.child('Users').child(key).child('Notifications').child(projName).set({
                         text: projName,
@@ -138,7 +156,7 @@ app.controller('LoginController', function($scope, $firebase, $timeout, $state, 
         });
     };
     $scope.logout = function() {
-        $scope.auth.$unauth();
+        Auth.$unauth();
         $scope.user=null;
     }
     $scope.auth.$onAuth(function(authData) {

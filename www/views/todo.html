@@ -45,9 +45,13 @@
             </ion-header-bar>
             <ion-content has-header="true" scroll="false">
                 <ion-list>
-                    <ion-item ng-repeat="(name, project) in projectsList" ng-click="selectProject(name)" ng-class="{active: lastproject == project}">
+                    <ion-item class="item item-button-right" ng-repeat="(name, project) in projectsList" ng-click="selectProject(name)" ng-class="{active: lastproject == project}">
                         {{name}}
+                        <button class="button button-clear" ng-click="deleteProject(name, project)">
+                            <i class="icon ion-close-round"></i>
+                        </button>  
                     </ion-item>
+                    
                 </ion-list>
             </ion-content>
             <ion-footer-bar class="bar bar-footer bar-dark ng-hide" align-title="center" ng-hide="!lastproject">
@@ -97,16 +101,16 @@
             <!-- Modal content area -->
             <ion-content has-header="true">
 
-                <form ng-submit="createTask(task)">
+                <form ng-submit="createTask(taskModalInput)">
                     <div class="list">
                         <label class="item item-input">
-                            <input type="text" placeholder="What do you need to do?" ng-model="task.title">
-            </label>
-            </div>
+                            <input type="text" placeholder="What do you need to do?" ng-model="taskModalInput.title">
+                        </label>
+                    </div>
                     <div class="padding">
                         <button type="submit" class="button button-full button-primary">Create Task</button>
-            </div>
-            </form>
+                    </div>
+                </form>
 
             </ion-content>
 
