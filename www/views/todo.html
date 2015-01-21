@@ -7,14 +7,10 @@
                 <button class="button button-icon" ng-click="toggleProjects()">
                     <i class="icon ion-navicon"></i>
                 </button>
-                
+
                 <!-- Open notifications button -->
-                <button class="button button-clear" ng-click="openNotifications()">
-                    Notifications
-                </button>
-                <!-- Share project button -->
-                <button class="button button-clear" ng-click="sendNotification(projectsList[lastproject], lastproject, null)">
-                    Share Project
+                <button class="button button-icon" ng-click="openNotifications()">
+                    <i class="ion ion-earth"></i>
                 </button>
                 <h1 class="title">{{lastproject}}</h1>
                 <!-- Logout button -->
@@ -27,15 +23,15 @@
                 </button>
             </ion-header-bar>
             <ion-content has-header="true" scroll="false">
-                <ion-list>
-                    <ion-checkbox ng-model="task.done" ng-repeat="task in projectsList[lastproject]" ng-hide="!task.done" class="ng-hide" ng-click="taskToggle(task)">
+                <ion-list class="list-dark">
+                    <ion-checkbox ng-model="task.done" ng-repeat="task in projectsList[lastproject]" ng-hide="!task.done" class="ng-hide checkbox-dark" ng-click="taskToggle(task)">
                         <s>{{task.title}}</s>
                     </ion-checkbox>
-                    <ion-checkbox ng-model="task.done" ng-repeat="task in projectsList[lastproject]" ng-hide="task.done" class="ng-hide" ng-click="taskToggle(task)">
+                    <ion-checkbox ng-model="task.done" ng-repeat="task in projectsList[lastproject]" ng-hide="task.done" class="ng-hide checkbox-dark" ng-click="taskToggle(task)">
                         {{task.title}}
                     </ion-checkbox>
                 </ion-list>
-                
+
             </ion-content>
         </ion-side-menu-content>
 
@@ -54,6 +50,13 @@
                     </ion-item>
                 </ion-list>
             </ion-content>
+            <ion-footer-bar class="bar bar-footer bar-dark ng-hide" align-title="center" ng-hide="!lastproject">
+                <h1 class="title">
+                    <button class="button title" ng-click="sendNotification(projectsList[lastproject], lastproject, null)" >
+                        Share Current Project
+                    </button>
+                </h1>
+            </ion-footer-bar>
         </ion-side-menu>
 
         <script id="notifications.html" type="text/ng-template">
@@ -70,12 +73,12 @@
             <ion-content has-header="true">
                 <ion-list>
                     <ion-item ng-repeat="notification in notifications">
-                        {{notification.id}}
+                        
                         <button class="button button-icon" ng-click="getProject(notification.id, notification.uid)">
-                            <i class="ion ion-plus"></i>
+                            {{notification.id}}<i class="ion ion-plus"></i>
                         </button>
                     </ion-item>
-                 </ion-list>
+                </ion-list>
             </ion-content>
 
             </div>
@@ -98,12 +101,12 @@
                     <div class="list">
                         <label class="item item-input">
                             <input type="text" placeholder="What do you need to do?" ng-model="task.title">
-                        </label>
-                    </div>
+            </label>
+            </div>
                     <div class="padding">
                         <button type="submit" class="button button-full button-primary">Create Task</button>
-                    </div>
-                </form>
+            </div>
+            </form>
 
             </ion-content>
 
